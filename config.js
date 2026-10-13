@@ -2,7 +2,7 @@
 window.SCOUTING = {
   // Paste the Apps Script web app URL (ends in /exec) between the quotes.
   // Leave it empty and the site still works from the saved snapshot in /data.
-  apiUrl: "",
+  apiUrl: "https://script.google.com/macros/s/AKfycbx1et2ppJIpcfq-Z3mCmkTfHq0NMclADtr265L5m-uzXmdKjPWHhr0qmfhChZj5jHJOgQ/exec",
 
   // Google Form the team uses to take notes during RFDs.
   formUrl: "https://forms.gle/ivYx9G15n152hwMGA",
