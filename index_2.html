@@ -1,0 +1,687 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alpharetta Scouting</title>
+<meta name="description" content="Alpharetta High School policy debate scouting.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='8' width='28' height='16' rx='2' fill='%23ffe14d'/%3E%3Ctext x='16' y='21.5' font-family='Arial Narrow,Arial,sans-serif' font-size='14' font-weight='700' text-anchor='middle' fill='%238c2234'%3EA%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=DM+Serif+Display&family=Source+Sans+3:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sticky search rail + tab bar; each tab is a scouting tool (Search, Teams, Meta, Evidence, What's New, Ask). Aff = ink blue, Neg = flow red, as on a flow. */
+:root{
+  --bg:#0c0e13; --surface:#12161c; --sunk:#181c24; --line:#7b7265; --fg:#cfd8e2; --muted:#b0a99f;
+  --accent:#3b8cff; --accent-line:#001e8e; --accent-ink:#ffffff; --aff:#6fa0ff; --aff-bg:#16202f; --neg:#ff7e73; --neg-bg:#311917;
+  --hl:#3a3112; --mark:#5c4b0c; --good:#5fd394;
+  --yellow:#ffe14d; --maroon-2:#a32a3f;
+  --display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.45;margin:0}
+mark{background:var(--mark);color:inherit;border-radius:2px;padding:0 1px}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1160px;margin:0 auto;padding-inline:16px;padding-block:18px 64px}
+header.top{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 18px;margin-bottom:12px}
+h1{font-family:var(--display);font-weight:700;font-size:34px;letter-spacing:.02em;margin:0;text-transform:uppercase}
+h1 .hlw{background:var(--yellow);color:#141414;padding:0 .16em;border-radius:2px}
+h1{font-family:"DM Serif Display",Georgia,"Times New Roman",serif;font-weight:400;font-size:38px;letter-spacing:-.01em;text-transform:none;line-height:1.05}
+.stats{color:var(--muted);font-variant-numeric:tabular-nums;font-size:14px}
+.me{margin-left:auto;font-size:13px;color:var(--muted)}
+.rail{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:8px;display:grid;gap:8px;border-bottom:1px solid var(--line)}
+.search{display:flex;gap:8px}
+.search input{flex:1;min-width:0;font:inherit;font-size:16px;padding:10px 14px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg)}
+.filters{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}
+.fgroup{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.lab{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+.fgroup .lab{margin-right:2px}
+.chipbtn{font-size:13px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:3px 10px;cursor:pointer}
+.chipbtn[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.tab{font-family:var(--display);font-weight:600;font-size:17px;letter-spacing:.04em;text-transform:uppercase;background:none;border:0;border-bottom:3px solid transparent;color:var(--muted);padding:6px 11px;cursor:pointer;white-space:nowrap}
+.tab[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--accent-line)}
+.count{font-family:var(--body);font-size:12px;color:var(--muted);margin-left:4px;font-weight:500}
+main{margin-top:6px}
+.empty{padding:48px 8px;text-align:center;color:var(--muted)}
+.empty h2{font-family:var(--display);color:var(--fg);font-size:24px;margin:0 0 6px;text-transform:uppercase}
+.linkbtn{background:none;border:0;color:var(--accent);cursor:pointer;padding:0;font-size:inherit}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:14px}
+.btn.primary{background:#1c3aa9;color:#fff;border-color:#1c3aa9;font-weight:600}
+.btn:disabled{opacity:.5;cursor:default}
+h2.sec{font-family:var(--display);font-size:20px;text-transform:uppercase;letter-spacing:.05em;margin:22px 0 8px;display:flex;align-items:baseline;gap:8px}
+h2.sec .count{font-size:13px}
+
+/* doc rows */
+.list{display:grid}
+.doc{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:4px 14px;align-items:start;padding-block:12px;border-bottom:1px solid var(--line)}
+.sp{font-family:var(--display);font-weight:700;font-size:18px;text-align:center;border-radius:6px;padding:2px 0;letter-spacing:.03em}
+.sp.Aff{background:var(--aff-bg);color:var(--aff)}
+.sp.Neg{background:var(--neg-bg);color:var(--neg)}
+.tag{font-family:var(--mono);font-size:14px;font-weight:500;overflow-wrap:anywhere}
+.meta{color:var(--muted);font-size:13px;margin-top:2px;display:flex;flex-wrap:wrap;gap:2px 10px;align-items:baseline}
+.tlinkb{color:var(--fg);font-weight:700;cursor:pointer;background:none;border:0;padding:0;font-size:13px}
+.tlinkb:hover{color:var(--accent);text-decoration:underline}
+.star{background:none;border:0;cursor:pointer;color:var(--muted);font-size:15px;padding:0 2px;line-height:1}
+.star[aria-pressed="true"]{color:#d9a400}
+.pos{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.pchip{font-size:12px;background:var(--sunk);border-radius:4px;padding:1px 7px;cursor:pointer;border:0}
+.pchip i{font-style:normal;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.06em;margin-right:4px}
+.newtag{background:var(--hl);border-radius:3px;padding:0 4px;font-size:11px;font-weight:600}
+.notes{margin:8px 0 0;padding:0 0 0 16px;font-size:13.5px;display:grid;gap:2px}
+.notes li::marker{color:var(--muted)}
+.imp{display:flex;flex-wrap:wrap;gap:4px 6px;margin-top:6px;font-size:12.5px;align-items:baseline}
+.imp span.v{background:var(--neg-bg);border-radius:4px;padding:1px 7px}
+.alert{display:flex;gap:8px;align-items:baseline;margin-top:6px;background:var(--hl);border-radius:6px;padding:4px 10px;font-size:13px;width:fit-content;max-width:100%}
+.links{display:flex;flex-direction:column;gap:4px;align-items:flex-end}
+.links a{font-size:13px;color:var(--accent);text-decoration:none;white-space:nowrap}
+.links a:hover{text-decoration:underline}
+.more{margin:14px auto 0;display:block}
+.jump{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.jump .chipbtn{font-weight:600}
+
+/* teams grid */
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-top:12px}
+.tcard{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:grid;gap:6px;align-content:start;min-width:0;text-align:left;cursor:pointer}
+.tcard:hover{border-color:var(--accent)}
+.tcard h3{font-family:var(--display);font-size:22px;margin:0;letter-spacing:.02em;display:flex;gap:6px;align-items:baseline}
+.tcard .row{font-size:13px;display:grid;grid-template-columns:34px minmax(0,1fr);gap:6px}
+.tcard .row .v{font-family:var(--mono);font-size:12px;overflow-wrap:anywhere}
+
+/* team report */
+.report-head{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:baseline;margin-top:14px}
+.report-head h2{font-family:var(--display);font-size:40px;margin:0;letter-spacing:.01em;line-height:1}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;min-width:0}
+.panel h3{font-family:var(--display);font-size:18px;text-transform:uppercase;letter-spacing:.06em;margin:0 0 10px;display:flex;gap:8px;align-items:center}
+.panel h3 .dot{width:10px;height:10px;border-radius:50%}
+.bars{display:grid;gap:6px}
+.bar{display:grid;grid-template-columns:minmax(0,170px) minmax(0,1fr) 34px;gap:8px;align-items:center;font-size:13.5px}
+.bar .name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+.bar .name:hover{color:var(--accent)}
+.bar .track{height:12px;background:var(--sunk);border-radius:3px;overflow:hidden}
+.bar .fill{height:100%;border-radius:3px}
+.bar .n{text-align:right;font-variant-numeric:tabular-nums;color:var(--muted);font-size:12.5px}
+.aff-item{border-top:1px solid var(--line);padding-top:10px;margin-top:10px}
+.aff-item:first-of-type{border-top:0;padding-top:0;margin-top:0}
+.round-row{display:grid;grid-template-columns:120px minmax(0,1fr);gap:8px;padding:6px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.round-row:last-child{border-bottom:0}
+.round-row .rr{color:var(--muted);font-variant-numeric:tabular-nums}
+.round-row .rt{font-family:var(--mono);font-size:12.5px;overflow-wrap:anywhere}
+.note{border-top:1px solid var(--line);padding:8px 0;font-size:14px;display:grid;gap:2px}
+.note .by{font-size:12px;color:var(--muted);display:flex;gap:8px}
+.note-form{display:grid;gap:6px;margin-top:8px}
+.note-form textarea{font:inherit;font-size:14px;min-height:70px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);resize:vertical}
+
+/* meta table */
+.scroll{overflow-x:auto}
+.ptable{width:100%;border-collapse:collapse;margin-top:8px;font-size:14px}
+.ptable th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;padding:8px 6px;border-bottom:1px solid var(--line)}
+.ptable td{padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+.ptable td.n{font-variant-numeric:tabular-nums;text-align:right;width:56px}
+.pname{font-weight:600;cursor:pointer;background:none;border:0;padding:0;text-align:left}
+.pname:hover{color:var(--accent)}
+.ptype{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.tlist{display:flex;flex-wrap:wrap;gap:4px}
+.tl{font-size:12.5px;background:var(--sunk);border:0;border-radius:4px;padding:1px 7px;cursor:pointer}
+
+/* evidence */
+.ev-doc{padding:10px 0;border-bottom:1px solid var(--line);display:grid;gap:4px}
+.ev-line{font-family:var(--mono);font-size:12.5px;padding:2px 0 2px 10px;border-left:2px solid var(--line);overflow-wrap:anywhere}
+.ev-line.h{border-left-color:var(--accent)}
+.ev-line .cite{color:var(--muted)}
+
+/* feed */
+.feed{display:grid;gap:10px;margin-top:12px}
+.fitem{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 16px;display:grid;gap:4px;min-width:0}
+.fitem .kind{font-family:var(--display);font-weight:700;font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.fitem .txt{font-size:15px;font-weight:500}
+
+/* rfd notes */
+.rfd-top{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin-top:12px}
+.rfd-judges{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin-top:10px}
+.rfd{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-top:12px;display:grid;gap:12px;min-width:0}
+.rfd-head{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline}
+.rfd-head .rr{font-family:var(--display);font-weight:700;font-size:20px;letter-spacing:.03em;text-transform:uppercase}
+.rfd-head .vs{color:var(--muted);font-size:13px}
+.side{font-family:var(--display);font-weight:700;font-size:13px;border-radius:4px;padding:0 6px;letter-spacing:.04em}
+.side.Aff{background:var(--aff-bg);color:var(--aff)}
+.side.Neg{background:var(--neg-bg);color:var(--neg)}
+.won{font-size:12px;font-weight:700;border-radius:999px;padding:1px 9px;background:var(--fg);color:var(--bg)}
+.rfd-speeches{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:0;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.rfd-sp{padding:8px 10px;border-right:1px solid var(--line);min-width:0}
+.rfd-sp:last-child{border-right:0}
+.rfd-sp .lab{display:block;margin-bottom:3px}
+.rfd-sp .t{font-family:var(--mono);font-size:12.5px;white-space:pre-wrap;overflow-wrap:anywhere}
+.rfd-sp.aff .lab{color:var(--aff)} .rfd-sp.neg .lab{color:var(--neg)}
+.rfd-body{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.rfd-box{background:var(--sunk);border-radius:8px;padding:10px 12px;min-width:0}
+.rfd-box h4{font-family:var(--display);font-size:15px;text-transform:uppercase;letter-spacing:.06em;margin:0 0 6px}
+.rfd-box .t{font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5}
+.rfd-box.judge{background:var(--hl)}
+.rfd-foot{font-size:12.5px;color:var(--muted)}
+@media (max-width:640px){.rfd-sp{border-right:0;border-bottom:1px solid var(--line)}.rfd-sp:last-child{border-bottom:0}}
+
+/* ask */
+.chat{display:grid;gap:12px;margin-top:12px;max-width:820px}
+.msg{padding:10px 14px;border-radius:10px;font-size:15px;white-space:pre-wrap;overflow-wrap:anywhere}
+.msg.user{background:var(--aff-bg);justify-self:end;max-width:90%}
+.msg.bot{background:var(--surface);border:1px solid var(--line)}
+.msg.bot.thinking{color:var(--muted)}
+.ask-form{display:flex;gap:8px;margin-top:12px;max-width:820px}
+.ask-form textarea{flex:1;min-width:0;font:inherit;font-size:15px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg);resize:vertical;min-height:48px}
+.sugg{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.hint{font-size:13px;color:var(--muted);margin-top:6px;max-width:820px}
+
+.ftoggle{display:none}
+@media (max-width:640px){
+  .ftoggle{display:inline-block;white-space:nowrap}
+  .rail:not(.show-f) .filters{display:none}
+  .doc{grid-template-columns:52px minmax(0,1fr)}
+  .links{grid-column:2;flex-direction:row;gap:14px;align-items:center}
+  h1{font-size:28px}
+  .report-head h2{font-size:32px}
+  .bar{grid-template-columns:minmax(0,120px) minmax(0,1fr) 30px}
+  .round-row{grid-template-columns:1fr}
+  .me{margin-left:0}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+/* site-only additions: untagged rounds, RFD summary tables, footer */
+.pend{font-family:var(--body);font-size:11.5px;font-weight:500;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:0 6px;margin-left:8px;white-space:nowrap;vertical-align:2px}
+.tag.raw{color:var(--muted)}
+.three{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-top:14px}
+.mini{width:100%;border-collapse:collapse;font-size:14px}
+.mini th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;padding:4px 6px 6px 0;border-bottom:1px solid var(--line)}
+.mini td{padding:6px 6px 6px 0;border-bottom:1px solid var(--line);vertical-align:top}
+.mini td.n,.mini th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.mini td.m{font-family:var(--mono);font-size:12.5px}
+.gmail{margin-top:18px;font-size:13px;color:var(--muted)}
+.gmail a{color:var(--muted)}
+.foot{margin-top:40px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1><span class="hlw">Alpharetta</span> Scouting</h1>
+    <div class="stats" id="stats">Loading the chain index…</div>
+  </header>
+
+  <div class="rail">
+    <div class="search">
+      <input id="q" type="search" placeholder="Search teams, positions, authors, impacts… try “Klarnet”, “WaRu”, “cap k alt”" autocomplete="off" aria-label="Search">
+      <button class="btn ftoggle" id="ftoggle" type="button" aria-expanded="false">Filters</button>
+    </div>
+    <div class="filters" id="filters"></div>
+    <div class="tabs" role="tablist" id="tabs">
+      <button class="tab" role="tab" data-view="docs">Search<span class="count" id="c-docs"></span></button>
+      <button class="tab" role="tab" data-view="teams">Teams<span class="count" id="c-teams"></span></button>
+      <button class="tab" role="tab" data-view="meta">Meta<span class="count" id="c-meta"></span></button>
+      <button class="tab" role="tab" data-view="evidence">Evidence</button>
+      <button class="tab" role="tab" data-view="new">What's New<span class="count" id="c-new"></span></button>
+      <button class="tab" role="tab" data-view="rfd">RFDs<span class="count" id="c-rfd"></span></button>
+    </div>
+  </div>
+
+  <main id="view">
+    <div class="empty"><h2>Loading speech docs</h2></div>
+  </main>
+  <footer class="foot">Alpharetta High School Debate</footer>
+</div>
+
+<script src="config.js"></script>
+<script>
+(function(){
+  "use strict";
+  const C=window.SCOUTING||{};
+  const SPEECHES=["1AC","1NC","2AC","2NC","1NR","1AR","2NR","2AR","Extra"];
+  const SP_ORDER=Object.fromEntries(SPEECHES.map((s,i)=>[s,i]));
+  const TYPES=["Aff","Adv","DA","CP","K","T","Theory","Case"];
+  const TYPE_COLOR={DA:"var(--neg)",CP:"var(--accent)",K:"#9b59b6",T:"#d98a00",Theory:"var(--muted)",Case:"var(--good)",Aff:"var(--aff)",Adv:"var(--aff)"};
+  const PAGE=60;
+  const GMAIL="https://mail.google.com/mail/?authuser=alpharettadebatedocs@gmail.com#all/";
+
+  const S={docs:[],pending:[],all:[],byTeam:new Map(),q:"",tourney:new Set(),speech:new Set(),type:new Set(),starredOnly:false,
+           view:"docs",team:null,limit:PAGE,stars:new Set(),notes:[],outlines:null,outlinesLoading:false,
+           chat:[],asking:false,loaded:false,rfds:[],meta:null,round:null,byThread:new Map(),updated:"",live:false};
+
+  const $=s=>document.querySelector(s);
+  const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const terms=()=>S.q.toLowerCase().split(/\s+/).filter(Boolean);
+  function hi(text,ts){
+    let out=esc(text); if(!ts||!ts.length) return out;
+    const re=new RegExp("("+ts.map(t=>esc(t).replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|")+")","gi");
+    return out.replace(re,"<mark>$1</mark>");
+  }
+  function fmtDate(iso){const d=new Date(iso); if(isNaN(d)) return ""; return d.toLocaleDateString(undefined,{month:"short",day:"numeric"})+" "+d.toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"});}
+
+  try{S.stars=new Set(JSON.parse(localStorage.getItem("cs-stars")||"[]"));}catch(e){}
+  try{const v=localStorage.getItem("cs-view"); if(v) S.view=v;}catch(e){}
+  if(/^#(docs|teams|meta|evidence|new|rfd|ask)$/.test(location.hash)) S.view=location.hash.slice(1);
+  const saveStars=()=>{try{localStorage.setItem("cs-stars",JSON.stringify([...S.stars]))}catch(e){}};
+
+  /* ---------- untagged rounds: tournament, round, teams and speech from the email subject + file name ---------- */
+  const TOURNEYS=[[/westminster|\bwesty\b/i,"Westminster"],[/trevian|new trier (?:r(?:ound|d)?\s*\d|doubles|octa?s|octos|quarters|semis|finals)|^nt r\d/i,"Trevian"],
+    [/mid ?america/i,"Mid America Cup"],[/jack howe|long beach/i,"Jack Howe (Long Beach)"],[/grapevine|\bgvine\b/i,"Grapevine"],
+    [/\bukso\b|kentucky/i,"UKSO"],[/scotts? cup/i,"Scotts Cup"],[/glenbrooks/i,"Glenbrooks"]];
+  const ROUND_RE=/\b(?:round|rd|r)\s*\.?\s*(\d{1,2}|one|two|three|four|five|six|seven)\b/i;
+  const ELIM_RE=/\b(partial[- ]?oct(?:a|o)s|doubles|triples|octa?s|octos|quarter(?:final)?s|semi(?:final)?s|finals)\b/i;
+  const WORDNUM={one:1,two:2,three:3,four:4,five:5,six:6,seven:7};
+  const AFF_SP=new Set(["1AC","2AC","1AR","2AR"]);
+  function parseRound(s){
+    const m=s.match(ROUND_RE); if(m) return "R"+(WORDNUM[m[1].toLowerCase()]||m[1]);
+    const e=s.match(ELIM_RE); if(!e) return "";
+    const t=e[1].toLowerCase();
+    return t.startsWith("partial")?"Partial Octas":t.startsWith("oct")?"Octas":t.startsWith("quarter")?"Quarters":t.startsWith("semi")?"Semis":t.startsWith("final")?"Finals":t[0].toUpperCase()+t.slice(1);
+  }
+  function parseTeams(s){
+    const t=s.replace(/\s*-{2,}\s*/g," | ").replace(/\s+-\s+/g," | ").replace(/[\[\]]/g,m=>m==="["?" [":"] ");
+    const parts=t.split(/\s+(?:vs?|versus)\.?\s+/i);
+    if(parts.length!==2) return {aff:"",neg:""};
+    let L=parts[0].split(" | ").pop(), R=parts[1].split(" | ")[0];
+    L=L.replace(new RegExp("^.*(?:"+ROUND_RE.source+"|"+ELIM_RE.source+")(?:\\s+real chain)?","i"),"");
+    L=L.replace(/^.*\b(?:westminster|trevian(?: invitational)?|scotts? cup)\b[\s/:]*/i,"");
+    const side=x=>/\b(aff)\b/i.test(x)?"aff":/\b(neg)\b/i.test(x)?"neg":"";
+    const clean=x=>x.replace(/\[\s*(aff|neg)\s*\]/ig," ").replace(/\b(aff|neg)\b/ig," ").replace(/[\[\]]/g," ").replace(/\s+/g," ").replace(/^[\s:,.-]+|[\s:,.-]+$/g,"").trim();
+    let a=clean(L), n=clean(R);
+    if(side(L)==="neg"||side(R)==="aff") [a,n]=[n,a];
+    return {aff:a,neg:n};
+  }
+  function fromPending(p){
+    const s=String(p.subject||""), fn=String(p.filename||"");
+    const tour=(TOURNEYS.find(([re])=>re.test(s))||[])[1]||"";
+    const {aff,neg}=parseTeams(s);
+    const sm=fn.match(/\b(1AC|1NC|2AC|2NC|1NR|1AR|2NR|2AR)\b/i)||fn.match(/(1AC|1NC|2AC|2NC|1NR|1AR|2NR|2AR)/i);
+    const speech=sm?sm[1].toUpperCase():/block/i.test(fn)?"2NC":"Doc";
+    const side=speech==="Doc"?"":(AFF_SP.has(speech)?"Aff":"Neg");
+    return {id:p.id,date:p.date,tourney:tour,round:parseRound(s),aff,neg,team:side==="Aff"?aff:side==="Neg"?neg:"",side,speech,
+            tag:fn.replace(/\.docx?$/i,""),subject:s,speaker:p.sender||"",file_url:p.file_url,thread:p.thread,positions:[],pending:true};
+  }
+  const isResend=d=>/\((?:re-?sen[dt]|duplicate)[^)]*\)\s*$/i.test(d.tag||"");
+  const META_NOTE=/\b(likely|probably|appears?|seems?|file ?name|thread|re-?sen[dt]|resend|outline|identical|duplicate|forwarded|originally sent)\b/i;
+  const notesOf=d=>(d.notes||[]).filter(n=>!META_NOTE.test(n));
+
+  /* ---------- data shaping ---------- */
+  function hay(d){
+    return d._h||(d._h=[d.tag,d.team,d.aff,d.neg,d.tourney,d.round,d.speaker,d.speech,d.filename,d.subject,
+      (d.positions||[]).map(p=>p.name+" "+p.type).join(" "),(d.notes||[]).join(" "),(d.impacts||[]).join(" "),
+      (d.alerts||[]).map(a=>a.kind+" "+a.text).join(" ")].join(" ").toLowerCase());
+  }
+  function indexTeams(){
+    const m=new Map();
+    for(const d of S.docs){ if(!d.team) continue; if(!m.has(d.team)) m.set(d.team,[]); m.get(d.team).push(d); }
+    S.byTeam=m;
+  }
+  function baseFilter(d,ignoreQuery){
+    if(S.tourney.size && !S.tourney.has(d.tourney)) return false;
+    if(S.speech.size && !S.speech.has(d.speech)) return false;
+    if(S.type.size && !(d.positions||[]).some(p=>S.type.has(p.type))) return false;
+    if(S.starredOnly && !S.stars.has(d.team)) return false;
+    if(!ignoreQuery){const ts=terms(); if(ts.length && !ts.every(t=>hay(d).includes(t))) return false;}
+    return true;
+  }
+  const byDate=(a,b)=>(b.date||"").localeCompare(a.date||"")||(SP_ORDER[a.speech]??9)-(SP_ORDER[b.speech]??9);
+  function filtered(){return S.docs.filter(d=>baseFilter(d)).sort(byDate);}
+  function filteredAll(){return S.all.filter(d=>baseFilter(d)).sort(byDate);}
+
+  function teamSummary(team,docs){
+    docs=docs||S.byTeam.get(team)||[];
+    const rounds=new Map();
+    for(const d of docs){const k=d.tourney+" · "+d.round; if(!rounds.has(k)) rounds.set(k,{key:k,tourney:d.tourney,round:d.round,side:d.side,opp:d.side==="Aff"?d.neg:d.aff,date:d.date,docs:[]}); rounds.get(k).docs.push(d);}
+    const negCount=new Map(), offRounds=new Map();
+    for(const d of docs){
+      if(d.side!=="Neg") continue;
+      for(const p of d.positions||[]){
+        if(!["DA","CP","K","T","Theory"].includes(p.type)) continue;
+        const k=p.name; if(!offRounds.has(k)) offRounds.set(k,{name:k,type:p.type,rounds:new Set()});
+        offRounds.get(k).rounds.add(d.tourney+d.round);
+      }
+    }
+    const neg=[...offRounds.values()].map(x=>({...x,n:x.rounds.size})).sort((a,b)=>b.n-a.n||a.name.localeCompare(b.name));
+    const affs=docs.filter(d=>d.speech==="1AC");
+    const affMap=new Map();
+    for(const d of affs){const k=d.tag.replace(/\s*\((v\d+|.*resent.*|.*duplicate.*)\)\s*$/i,""); if(!affMap.has(k)) affMap.set(k,d);}
+    const late=docs.filter(d=>["2NC","1NR","2NR"].includes(d.speech)).sort(byDate);
+    const impacts=[...new Set(docs.flatMap(d=>d.impacts||[]))];
+    const alerts=docs.flatMap(d=>(d.alerts||[]).map(a=>({...a,d}))).sort((a,b)=>byDate(a.d,b.d));
+    const negRounds=[...rounds.values()].filter(r=>r.side==="Neg").length;
+    return {team,docs,rounds:[...rounds.values()].sort((a,b)=>(b.date||"").localeCompare(a.date||"")),neg,affs:[...affMap.values()],late,impacts,alerts,negRounds};
+  }
+
+  /* ---------- filters + tabs ---------- */
+  function renderFilters(){
+    const tours=[...new Set(S.all.map(d=>d.tourney).filter(Boolean))].sort();
+    const sps=SPEECHES.filter(s=>S.docs.some(d=>d.speech===s));
+    const g=(label,key,vals)=>vals.length?`<div class="fgroup"><span class="lab">${label}</span>${vals.map(v=>`<button class="chipbtn" data-f="${key}" data-v="${esc(v)}" aria-pressed="${S[key].has(v)}">${esc(v)}</button>`).join("")}</div>`:"";
+    const any=S.q||S.tourney.size||S.speech.size||S.type.size||S.starredOnly;
+    $("#filters").innerHTML=g("Tourney","tourney",tours)+g("Speech","speech",sps)+g("Type","type",TYPES)+
+      `<div class="fgroup"><button class="chipbtn" id="staronly" aria-pressed="${S.starredOnly}">★ Starred teams${S.stars.size?" ("+S.stars.size+")":""}</button></div>`+
+      (any?`<button class="linkbtn" id="clearall" style="font-size:13px">Clear all</button>`:"");
+  }
+  function setCounts(list){
+    $("#c-docs").textContent=(list.length+S.pending.filter(d=>baseFilter(d)).length)||"";
+    $("#c-teams").textContent=new Set(list.map(d=>d.team)).size||"";
+    $("#c-meta").textContent=new Set(list.flatMap(d=>(d.positions||[]).filter(p=>!["Case","Adv","Aff"].includes(p.type)).map(p=>p.name))).size||"";
+    $("#c-new").textContent=list.reduce((n,d)=>n+(d.alerts||[]).length,0)||"";
+    $("#c-rfd").textContent=S.rfds.length?rfdFiltered().length||"":"";
+    document.querySelectorAll(".tab").forEach(b=>{const on=S.team?b.dataset.view==="teams":b.dataset.view===S.view; b.setAttribute("aria-selected",String(on));});
+  }
+
+  /* ---------- RFD notes ---------- */
+  const RFD_SP=[["ac","1AC","aff"],["nc","1NC","neg"],["block","Block","neg"],["ar1","1AR","aff"],["nr","2NR","neg"],["ar","2AR","aff"]];
+  function rfdHay(r){return r._h||(r._h=[r.tourney,r.round,r.aff,r.neg,r.judge,r.decision,r.by,...RFD_SP.map(s=>r[s[0]]),r.thoughts,r.rfd].join(" ").toLowerCase());}
+  const rfdSort=(a,b)=>(b.at||"").localeCompare(a.at||"")||String(b.round||"").localeCompare(String(a.round||""));
+  function rfdFiltered(){const ts=terms(); return S.rfds.filter(r=>(!S.tourney.size||S.tourney.has(r.tourney))&&ts.every(t=>rfdHay(r).includes(t))).sort(rfdSort);}
+  function rfdsFor(team){const L=String(team).toLowerCase(); return S.rfds.filter(r=>(r.aff||"").toLowerCase()===L||(r.neg||"").toLowerCase()===L).sort(rfdSort);}
+  function teamBtn(t){return t?`<button class="tlinkb" data-search="${esc(t)}">${esc(t)}</button>`:`<span class="stats">—</span>`;}
+  function rfdCard(r,ts){
+    const dec=(r.decision||"").toLowerCase();
+    const sp=RFD_SP.filter(s=>(r[s[0]]||"").trim());
+    const rr=[r.tourney,r.round?(/^\d+$/.test(r.round)?"Round "+r.round:r.round):""].filter(Boolean).join(" · ")||"Round";
+    return `<article class="rfd">
+      <div class="rfd-head"><span class="rr">${esc(rr)}</span>
+        <span><span class="side Aff">AFF</span> ${teamBtn(r.aff)}</span><span class="vs">vs</span><span><span class="side Neg">NEG</span> ${teamBtn(r.neg)}</span>
+        ${r.judge?`<span class="vs">Judge</span><button class="tlinkb" data-search="${esc(r.judge)}">${hi(r.judge,ts)}</button>`:""}
+        ${dec==="aff"||dec==="neg"?`<span class="won">${dec==="aff"?"Aff":"Neg"} won</span>`:""}</div>
+      ${sp.length?`<div class="rfd-speeches">${sp.map(s=>`<div class="rfd-sp ${s[2]}"><span class="lab">${s[1]}</span><div class="t">${hi(r[s[0]],ts)}</div></div>`).join("")}</div>`:""}
+      ${(r.thoughts||r.rfd)?`<div class="rfd-body">
+        ${r.thoughts?`<section class="rfd-box"><h4>Our thoughts</h4><div class="t">${hi(r.thoughts,ts)}</div></section>`:""}
+        ${r.rfd?`<section class="rfd-box judge"><h4>Judge feedback + RFD</h4><div class="t">${hi(r.rfd,ts)}</div></section>`:""}
+      </div>`:""}
+      ${(r.by||r.at)?`<div class="rfd-foot">${r.by?"Notes by "+esc(r.by):""}${r.by&&r.at?" · ":""}${r.at?esc(fmtDate(r.at)):""}</div>`:""}
+    </article>`;
+  }
+  function renderRfds(){
+    const list=rfdFiltered(), ts=terms();
+    const top=`<div class="rfd-top">${C.formUrl?`<a class="btn primary" href="${esc(C.formUrl)}" target="_blank" rel="noopener" style="text-decoration:none">+ Add RFD notes</a>`:""}
+      <span class="stats">From the RFD form. New answers show up when you refresh.</span></div>`;
+    if(!C.apiUrl) return top+`<div class="empty"><h2>Not connected yet</h2><p>Form answers show up here once the script URL is in config.js.</p></div>`;
+    if(!list.length) return top+(S.rfds.length?emptyMsg():`<div class="empty"><h2>No RFD notes yet</h2></div>`);
+    const ours=t=>String(t||"").toLowerCase().startsWith(String(C.ourPrefix||"Alpharetta").toLowerCase());
+    const won=r=>(r.decision||"").toLowerCase();
+    const first=s=>String(s||"").split("\n")[0].trim();
+    const group=(rs,key)=>{const m=new Map(); for(const r of rs){const k=key(r); if(!k) continue; if(!m.has(k)) m.set(k,[]); m.get(k).push(r);} return [...m.entries()].sort((a,b)=>b[1].length-a[1].length);};
+    const rec=(rs,side)=>{const w=rs.filter(r=>won(r)===side).length, l=rs.filter(r=>won(r)&&won(r)!==side).length; return w+l?`${w}–${l}`:"–";};
+    const affs=group(list.filter(r=>ours(r.aff)&&r.ac),r=>r.aff+"\u0000"+first(r.ac));
+    const nrs=group(list.filter(r=>ours(r.neg)&&r.nr),r=>r.neg+"\u0000"+first(r.nr));
+    const judges=group(list.filter(r=>r.judge),r=>r.judge);
+    const panel=(title,rows,head,fn)=>`<section class="panel"><h3>${title}</h3>${rows.length?`<table class="mini"><thead><tr>${head}</tr></thead><tbody>${rows.map(fn).join("")}</tbody></table>`:`<p class="stats" style="margin:0">None yet.</p>`}</section>`;
+    return top+`<div class="three">
+      ${panel("Our affs",affs,"<th>Team</th><th>1AC</th><th class='n'>W–L</th>",([k,rs])=>{const [t,a]=k.split("\u0000"); return `<tr><td>${esc(t)}</td><td class="m">${esc(a)}</td><td class="n">${rec(rs,"aff")}</td></tr>`;})}
+      ${panel("Our 2NRs",nrs,"<th>Team</th><th>2NR</th><th class='n'>W–L</th>",([k,rs])=>{const [t,a]=k.split("\u0000"); return `<tr><td>${esc(t)}</td><td class="m">${esc(a)}</td><td class="n">${rec(rs,"neg")}</td></tr>`;})}
+      ${panel("Judges",judges,"<th>Judge</th><th class='n'>Rounds</th><th class='n'>Aff–Neg</th>",([j,rs])=>`<tr><td><button class="tlinkb" data-search="${esc(j)}">${esc(j)}</button></td><td class="n">${rs.length}</td><td class="n">${rs.filter(r=>won(r)==="aff").length}–${rs.filter(r=>won(r)==="neg").length}</td></tr>`)}
+    </div>
+    <h2 class="sec">Rounds<span class="count">${list.length}</span></h2>`+list.map(r=>rfdCard(r,ts)).join("");
+  }
+
+  function renderRound(thread){
+    const docs=(S.byThread.get(thread)||[]).slice().sort((a,b)=>(SP_ORDER[a.speech]??9)-(SP_ORDER[b.speech]??9)||(a.date||"").localeCompare(b.date||""));
+    if(!docs.length) return `<div class="empty"><h2>Round not found</h2><p><button class="linkbtn" data-back>Back</button></p></div>`;
+    const d0=docs[0];
+    return `<div style="margin-top:10px"><button class="linkbtn" data-back>← Back</button></div>
+    <div class="report-head"><h2>${esc(d0.tourney)} ${esc(d0.round)}</h2>
+      <span class="stats">${esc(d0.aff)} (aff) vs ${esc(d0.neg)} (neg) · ${docs.length} docs on the chain</span></div>
+    <div class="list" style="margin-top:8px">${docs.map(d=>docRow(d,[])).join("")}</div>
+    <p class="gmail">Email thread (team Gmail only): <a href="${esc(GMAIL+thread)}" target="_blank" rel="noopener">open in Gmail ↗</a></p>`;
+  }
+
+  /* ---------- views ---------- */
+  function starBtn(team){return `<button class="star" data-star="${esc(team)}" aria-pressed="${S.stars.has(team)}" title="Star this team" aria-label="Star ${esc(team)}">${S.stars.has(team)?"★":"☆"}</button>`;}
+  function docRow(d,ts){
+    if(d.pending){
+      const vs=d.side?(d.side+" vs "+(d.side==="Aff"?d.neg:d.aff)):[d.aff,d.neg].filter(Boolean).join(" vs ");
+      return `<article class="doc">
+      <div class="sp ${esc(d.side)}" title="${esc(d.side)}">${esc(d.speech)}</div>
+      <div style="min-width:0">
+        <div class="tag raw">${hi(d.tag,ts)}<span class="pend">not tagged yet</span></div>
+        <div class="meta">${d.team?`<span class="tlinkb" style="cursor:default">${hi(d.team,ts)}</span>`:""}${vs?`<span>${hi(vs,ts)}</span>`:""}<span>${hi([d.tourney,d.round].filter(Boolean).join(" ")||d.subject,ts)}</span><span>${esc(d.speaker)}</span><span>${fmtDate(d.date)}</span></div>
+      </div>
+      <div class="links">
+        ${d.file_url?`<a href="${esc(d.file_url)}" target="_blank" rel="noopener">Open doc ↗</a>`:""}
+        ${d.thread?`<a href="#" data-round="${esc(d.thread)}">Full round →</a>`:""}
+      </div>
+    </article>`;
+    }
+    const opp=d.side==="Aff"?d.neg:d.aff;
+    return `<article class="doc">
+      <div class="sp ${esc(d.side)}" title="${esc(d.side)}">${esc(d.speech)}</div>
+      <div style="min-width:0">
+        <div class="tag">${hi(d.tag,ts)}</div>
+        <div class="meta">${starBtn(d.team)}<button class="tlinkb" data-team="${esc(d.team)}">${esc(d.team)}</button><span>${esc(d.side)} vs ${esc(opp)}</span><span>${esc(d.tourney)} ${esc(d.round)}</span><span>${esc(d.speaker)}</span><span>${fmtDate(d.date)}</span></div>
+        ${(d.alerts||[]).map(a=>`<div class="alert"><span class="lab">${esc(a.kind)}</span><span>${hi(a.text,ts)}</span></div>`).join("")}
+        ${notesOf(d).length?`<ul class="notes">${notesOf(d).map(n=>`<li>${hi(n,ts)}</li>`).join("")}</ul>`:""}
+        ${(d.impacts||[]).length?`<div class="imp"><span class="lab">Impacts</span>${d.impacts.map(n=>`<span class="v">${hi(n,ts)}</span>`).join("")}</div>`:""}
+        ${(d.positions||[]).length?`<div class="pos">${d.positions.map(p=>`<button class="pchip" data-search="${esc(p.name)}"><i>${esc(p.type)}</i>${(d.isNew||[]).includes(p.name)?'<span class="newtag">new</span> ':""}${esc(p.name)}</button>`).join("")}</div>`:""}
+      </div>
+      <div class="links">
+        ${d.file_url?`<a href="${esc(d.file_url)}" target="_blank" rel="noopener">Open doc ↗</a>`:""}
+        ${d.thread?`<a href="#" data-round="${esc(d.thread)}">Full round →</a>`:""}
+      </div>
+    </article>`;
+  }
+  function renderDocs(list){
+    if(!list.length) return teamJump()+emptyMsg();
+    const ts=terms();
+    const np=S.pending.length, plain=!ts.length&&!S.tourney.size&&!S.speech.size&&!S.type.size&&!S.starredOnly;
+    return teamJump()+(np&&plain?`<p class="stats" style="margin:12px 0 0">${np.toLocaleString()} docs from the newest rounds aren't tagged yet. Their positions get filled in Monday and Thursday mornings.</p>`:"")+`<div class="list">${list.slice(0,S.limit).map(d=>docRow(d,ts)).join("")}</div>`+
+      (list.length>S.limit?`<button class="btn more" id="more">Show ${Math.min(PAGE,list.length-S.limit)} more of ${list.length-S.limit}</button>`:"");
+  }
+
+  function teamMatches(){
+    const ts=terms(); if(!ts.length) return [];
+    const q=ts.join(" ");
+    return [...S.byTeam.keys()].filter(t=>{const L=t.toLowerCase(); return ts.every(x=>L.includes(x));})
+      .sort((a,b)=>(b.toLowerCase()===q)-(a.toLowerCase()===q)||(S.byTeam.get(b).length-S.byTeam.get(a).length));
+  }
+  function teamJump(){
+    const m=teamMatches(); if(!m.length) return "";
+    return `<div class="jump"><span class="lab">Team${m.length>1?"s":""}</span>${m.slice(0,12).map(t=>`<button class="chipbtn" data-team="${esc(t)}">${esc(t)} →</button>`).join("")}</div>`;
+  }
+  function renderTeams(list){
+    const named=teamMatches();
+    const teams=new Map(); for(const d of list){if(!teams.has(d.team)) teams.set(d.team,[]); teams.get(d.team).push(d);}
+    for(const t of named) if(!teams.has(t)) teams.set(t,S.byTeam.get(t));
+    if(!teams.size) return emptyMsg();
+    const nameSet=new Set(named);
+    const all=[...teams.entries()].map(([t,ds])=>teamSummary(t,S.byTeam.get(t)||ds))
+      .sort((a,b)=>(nameSet.has(b.team)-nameSet.has(a.team))||(S.stars.has(b.team)-S.stars.has(a.team))||b.docs.length-a.docs.length||a.team.localeCompare(b.team));
+    const first=all.filter(t=>nameSet.has(t.team)), rest=all.filter(t=>!nameSet.has(t.team));
+    const card=t=>{
+      const aff=t.affs[0]?esc(t.affs[0].tag.replace(/^1AC\s*/,"")):"—";
+      const neg=t.neg.slice(0,5).map(x=>esc(x.name)).join(", ")||"—";
+      const tours=[...new Set(t.docs.map(d=>d.tourney))].join(", ");
+      return `<div class="tcard" role="button" tabindex="0" data-team="${esc(t.team)}">
+        <h3>${starBtn(t.team)}${esc(t.team)}</h3>
+        <div class="meta" style="margin:0">${esc(tours)} · ${t.rounds.length} round${t.rounds.length>1?"s":""} · ${t.docs.length} docs${t.alerts.length?` · <span class="newtag">${t.alerts.length} new</span>`:""}</div>
+        <div class="row"><span class="lab">Aff</span><span class="v">${aff}</span></div>
+        <div class="row"><span class="lab">Neg</span><span class="v">${neg}</span></div>
+      </div>`;};
+    if(first.length) return `<div class="grid">${first.map(card).join("")}</div>`+(rest.length?`<h2 class="sec">Teams in matching rounds<span class="count">${rest.length}</span></h2><div class="grid">${rest.slice(0,60).map(card).join("")}</div>`:"");
+    return `<div class="grid">${all.map(card).join("")}</div>`;
+  }
+
+  function bars(items,max,cls){
+    return `<div class="bars">${items.map(x=>`<div class="bar"><span class="name" data-search="${esc(x.name)}" title="${esc(x.name)}">${esc(x.name)}</span><span class="track"><span class="fill" style="display:block;width:${Math.max(4,Math.round(100*x.n/max))}%;background:${TYPE_COLOR[x.type]||"var(--accent)"}"></span></span><span class="n">${x.n}</span></div>`).join("")}</div>`;
+  }
+
+  function renderTeamReport(team){
+    const t=teamSummary(team);
+    if(!t.docs.length) return `<div class="empty"><h2>No docs for ${esc(team)}</h2><p><button class="linkbtn" data-back>Back to teams</button></p></div>`;
+    const tours=[...new Set(t.docs.map(d=>d.tourney))].join(", ");
+    const negMax=Math.max(1,...t.neg.map(x=>x.n));
+    return `<div style="margin-top:10px"><button class="linkbtn" data-back>← All teams</button></div>
+    <div class="report-head"><h2>${esc(team)}</h2>${starBtn(team)}<span class="stats">${esc(tours)} · ${t.rounds.length} round${t.rounds.length===1?"":"s"} · ${t.docs.length} speech doc${t.docs.length===1?"":"s"}</span></div>
+
+    ${t.alerts.length?`<h2 class="sec">New from them<span class="count">${t.alerts.length}</span></h2>${t.alerts.map(a=>`<div class="alert"><span class="lab">${esc(a.kind)}</span><span>${esc(a.text)} <span class="stats">(${esc(a.d.tourney)} ${esc(a.d.round)})</span></span></div>`).join("")}`:""}
+
+    <div class="two" style="margin-top:16px">
+      <section class="panel"><h3><span class="dot" style="background:var(--aff)"></span>On the aff</h3>
+        ${t.affs.length?t.affs.map(d=>`<div class="aff-item"><div class="tag">${esc(d.tag)}</div><div class="meta">${esc(d.tourney)} ${esc(d.round)} vs ${esc(d.neg)} · <a href="${esc(d.file_url)}" target="_blank" rel="noopener" style="color:var(--accent)">1AC ↗</a></div>${(d.notes||[]).length?`<ul class="notes">${d.notes.map(n=>`<li>${esc(n)}</li>`).join("")}</ul>`:""}</div>`).join(""):`<p class="stats">No 1AC indexed yet.</p>`}
+      </section>
+      <section class="panel"><h3><span class="dot" style="background:var(--neg)"></span>On the neg <span class="count">${t.negRounds} round${t.negRounds===1?"":"s"}</span></h3>
+        ${t.neg.length?bars(t.neg.slice(0,14),negMax):`<p class="stats">No neg rounds indexed yet.</p>`}
+        <p class="stats" style="margin:8px 0 0;font-size:12px">Bar = number of rounds the position was read in.</p>
+      </section>
+    </div>
+
+    ${t.late.length?`<h2 class="sec">What they go for<span class="count">block + 2NR</span></h2><div class="panel">${t.late.map(d=>`<div class="round-row"><span class="rr">${esc(d.tourney)} ${esc(d.round)} · ${esc(d.speech)}</span><span class="rt">${esc(d.tag)}</span></div>`).join("")}</div>`:""}
+
+    ${rfdsFor(team).length?`<h2 class="sec">Our rounds vs them<span class="count">${rfdsFor(team).length}</span></h2>${rfdsFor(team).map(r=>rfdCard(r,[])).join("")}`:""}
+
+    ${t.impacts.length?`<h2 class="sec">Impact scenarios<span class="count">${t.impacts.length}</span></h2><div class="imp" style="margin:0">${t.impacts.map(n=>`<span class="v">${esc(n)}</span>`).join("")}</div>`:""}
+
+    <h2 class="sec">Every round<span class="count">${t.rounds.length}</span></h2>
+    ${t.rounds.map(r=>`<div class="panel" style="margin-bottom:10px"><h3 style="font-size:16px;margin-bottom:4px">${esc(r.tourney)} ${esc(r.round)} <span class="stats" style="text-transform:none;letter-spacing:0">${esc(r.side)} vs ${esc(r.opp)}</span>${(r.docs.find(d=>d.thread)||{}).thread?` <button class="linkbtn" data-round="${esc(r.docs.find(d=>d.thread).thread)}" style="font-size:13px;text-transform:none;letter-spacing:0">Full round →</button>`:""}</h3><div class="list">${r.docs.sort((a,b)=>(SP_ORDER[a.speech]??9)-(SP_ORDER[b.speech]??9)).map(d=>docRow(d,[])).join("")}</div></div>`).join("")}`;
+  }
+
+  function renderMeta(list){
+    const m=new Map(), affs=new Map();
+    for(const d of list){
+      for(const p of d.positions||[]){
+        if(["Case","Adv"].includes(p.type)) continue;
+        if(S.type.size && !S.type.has(p.type)) continue;
+        if(p.type==="Aff"){ if(d.speech==="1AC"){ if(!affs.has(p.name)) affs.set(p.name,new Set()); affs.get(p.name).add(d.team);} continue; }
+        if(!m.has(p.name)) m.set(p.name,{name:p.name,type:p.type,read:new Set(),answered:new Set(),rounds:new Set()});
+        const e=m.get(p.name);
+        if(d.side==="Neg"){e.read.add(d.team); e.rounds.add(d.tourney+d.round+d.team);} else e.answered.add(d.team);
+      }
+    }
+    const rows=[...m.values()].map(e=>({...e,n:e.rounds.size})).sort((a,b)=>b.n-a.n||a.name.localeCompare(b.name));
+    if(!rows.length) return emptyMsg();
+    const top=rows.slice(0,15), max=Math.max(1,...top.map(r=>r.n));
+    const affRows=[...affs.entries()].map(([name,s])=>({name,type:"Aff",n:s.size})).sort((a,b)=>b.n-a.n).slice(0,10);
+    const tl=s=>[...s].sort().map(t=>`<button class="tl" data-team="${esc(t)}">${esc(t)}</button>`).join("");
+    return `<div class="two" style="margin-top:12px">
+      <section class="panel"><h3>Most-read off-case <span class="count">neg rounds</span></h3>${bars(top,max)}</section>
+      <section class="panel"><h3>Affs on the circuit <span class="count">teams</span></h3>${affRows.length?bars(affRows,Math.max(1,...affRows.map(r=>r.n))):`<p class="stats">No 1ACs in this filter.</p>`}</section>
+    </div>
+    <h2 class="sec">Who reads what<span class="count">${rows.length} positions</span></h2>
+    <div class="scroll"><table class="ptable"><thead><tr><th>Position</th><th>Read by</th><th>Answered by</th><th class="n">Rounds</th></tr></thead><tbody>${
+      rows.map(r=>`<tr><td><button class="pname" data-search="${esc(r.name)}">${esc(r.name)}</button><div class="ptype">${esc(r.type)}</div></td><td><div class="tlist">${tl(r.read)}</div></td><td><div class="tlist">${tl(r.answered)}</div></td><td class="n">${r.n}</td></tr>`).join("")
+    }</tbody></table></div>`;
+  }
+
+  function evidenceHits(ts,max){
+    const hits=[];
+    if(!S.outlines||!ts.length) return hits;
+    const docMap=new Map(S.all.map(d=>[d.id,d]));
+    for(const o of S.outlines){
+      const d=docMap.get(o.id)||o;
+      if(!baseFilter({...d,_h:hay(d)},true)) continue;
+      const lines=(o.text||"").split("\n").filter(l=>{const L=l.toLowerCase(); return ts.every(t=>L.includes(t));});
+      if(lines.length) hits.push({d,lines});
+      if(hits.length>=max) break;
+    }
+    return hits.sort((a,b)=>byDate(a.d,b.d));
+  }
+  function renderEvidence(){
+    if(!S.outlines){ if(!S.outlinesLoading) loadOutlines(); return `<div class="empty"><h2>Loading card outlines…</h2><p>Every tag and cite from every speech doc, searchable.</p></div>`; }
+    if(!S.outlines.length) return `<div class="empty"><h2>Card outlines are on the way</h2><p>The Monday and Thursday updates fill this in. Search by author (“Klarnet”), claim (“dems win”) or block name.</p></div>`;
+    const ts=terms();
+    if(!ts.length) return `<div class="empty"><h2>Search ${S.outlines.length} speech docs card by card</h2><p>Type an author, a claim or a block name in the search bar: “Cutler”, “golden dome”, “perm do both”.</p></div>`;
+    const hits=evidenceHits(ts,250);
+    if(!hits.length) return emptyMsg();
+    const nLines=hits.reduce((n,h)=>n+h.lines.length,0);
+    return `<p class="stats" style="margin-top:10px">${nLines} matching lines in ${hits.length} docs</p>`+hits.slice(0,120).map(h=>{
+      const d=h.d;
+      return `<div class="ev-doc"><div class="meta" style="margin:0"><span class="sp ${esc(d.side||"")}" style="font-size:14px;padding:0 6px">${esc(d.speech)}</span><button class="tlinkb" data-team="${esc(d.team)}">${esc(d.team)}</button><span>${esc(d.tourney)} ${esc(d.round)}</span>${d.file_url?`<a href="${esc(d.file_url)}" target="_blank" rel="noopener" style="color:var(--accent)">Open doc ↗</a>`:""}</div>
+      ${h.lines.slice(0,8).map(l=>{const isH=/^#/.test(l); const [tag,cite]=l.replace(/^(#+|-)\s*/,"").split("  |  "); return `<div class="ev-line ${isH?"h":""}">${hi(tag,ts)}${cite?` <span class="cite">— ${hi(cite,ts)}</span>`:""}</div>`;}).join("")}
+      ${h.lines.length>8?`<div class="stats" style="font-size:12px">+${h.lines.length-8} more lines</div>`:""}</div>`;
+    }).join("");
+  }
+
+  function renderNew(list){
+    const items=list.flatMap(d=>(d.alerts||[]).map(a=>({...a,d}))).sort((a,b)=>byDate(a.d,b.d));
+    if(!items.length) return `<div class="empty"><h2>No new-argument alerts in this filter</h2><p>New affs, advantages, add-ons, positions and impact scenarios land here as rounds come in.</p></div>`;
+    return `<div class="feed">${items.slice(0,200).map(a=>`<article class="fitem"><span class="kind">${esc(a.kind)}</span><span class="txt">${esc(a.text)}</span>
+      <div class="meta" style="margin:0">${starBtn(a.d.team)}<button class="tlinkb" data-team="${esc(a.d.team)}">${esc(a.d.team)}</button><span>${esc(a.d.speech)}</span><span>${esc(a.d.tourney)} ${esc(a.d.round)}</span><span>${fmtDate(a.d.date)}</span>${a.d.file_url?`<a href="${esc(a.d.file_url)}" target="_blank" rel="noopener" style="color:var(--accent)">Open doc ↗</a>`:""}</div></article>`).join("")}</div>`;
+  }
+
+  function emptyMsg(){
+    if(!S.docs.length) return `<div class="empty"><h2>${S.loaded?"No docs indexed yet":"Loading speech docs"}</h2><p>Every speech doc from the Alpharetta docs chains shows up here, tagged and searchable.</p></div>`;
+    return `<div class="empty"><h2>Nothing matches</h2><p>Try a shorter search or <button class="linkbtn" id="clear2">clear the filters</button>.</p></div>`;
+  }
+
+  function render(){
+    const list=filtered();
+    const teams=new Set(S.docs.map(d=>d.team)), tours=new Set(S.all.map(d=>d.tourney).filter(Boolean));
+    $("#stats").textContent=S.all.length?`${S.all.length.toLocaleString()} speech docs · ${teams.size} teams · ${tours.size} tournaments${S.updated?" · through "+new Date(S.updated).toLocaleDateString(undefined,{month:"short",day:"numeric"}):""}`:(S.loaded?"No docs loaded":"Loading…");
+    renderFilters(); setCounts(list);
+    {const n=S.tourney.size+S.speech.size+S.type.size+(S.starredOnly?1:0); $("#ftoggle").textContent=n?`Filters (${n})`:"Filters";}
+    let html;
+    if(S.round) html=renderRound(S.round);
+    else if(S.team) html=renderTeamReport(S.team);
+    else if(S.view==="teams") html=renderTeams(list);
+    else if(S.view==="meta") html=renderMeta(list);
+    else if(S.view==="evidence") html=renderEvidence();
+    else if(S.view==="new") html=renderNew(list);
+    else if(S.view==="rfd") html=renderRfds();
+    else html=renderDocs(filteredAll());
+    $("#view").innerHTML=html;
+  }
+
+  /* ---------- loading: saved snapshot + Apps Script web app ---------- */
+  async function getJSON(f){const r=await fetch(f); if(!r.ok) throw new Error(f+" "+r.status); return r.json();}
+  const api=what=>C.apiUrl+(C.apiUrl.includes("?")?"&":"?")+"what="+what+"&t="+Date.now();
+  async function loadData(){
+    const snap=Promise.all((C.snapshotDocs||[]).map(getJSON)).then(a=>a.flat()).catch(()=>[]);
+    const live=C.apiUrl?getJSON(api("data")).catch(()=>null):Promise.resolve(null);
+    const [docs,fresh]=await Promise.all([snap,live]);
+    const seen=new Map();
+    for(const d of docs) seen.set(d.id,d);
+    if(fresh&&!fresh.error){ S.live=true; for(const d of fresh.docs||[]) seen.set(d.id,d); S.rfds=fresh.rfds||[]; }
+    const resends=[...seen.values()].filter(isResend);
+    S.docs=[...seen.values()].filter(d=>!isResend(d));
+    S.pending=(fresh&&!fresh.error&&fresh.pending||[]).filter(p=>!seen.has(p.id)).map(fromPending);
+    S.all=S.docs.concat(S.pending);
+    S.byThread=new Map(); for(const d of S.all.concat(resends)) if(d.thread){ if(!S.byThread.has(d.thread)) S.byThread.set(d.thread,[]); S.byThread.get(d.thread).push(d); }
+    S.updated=S.all.reduce((m,d)=>(d.date||"")>m?d.date:m,"");
+    indexTeams(); S.loaded=true; render();
+  }
+  async function loadOutlines(){
+    if(S.outlinesLoading) return; S.outlinesLoading=true;
+    const parts=await Promise.all([...(C.snapshotOutlines||[]).map(f=>getJSON(f).catch(()=>[])),
+      C.apiUrl?getJSON(api("outlines")).then(o=>o.outlines||[]).catch(()=>[]):Promise.resolve([])]);
+    const m=new Map(); for(const [id,text] of parts.flat()) m.set(id,{id,text});
+    S.outlines=[...m.values()];
+    S.outlinesLoading=false; if(S.view==="evidence") render();
+  }
+
+  /* ---------- events ---------- */
+  function openTeam(t){S.team=t; S.round=null; S.limit=PAGE; render(); window.scrollTo({top:0});}
+  function openRound(th){S.round=th; S.limit=PAGE; render(); window.scrollTo({top:0});}
+  document.addEventListener("click",e=>{
+    const el=e.target;
+    const star=el.closest("[data-star]");
+    if(star){e.stopPropagation(); const t=star.dataset.star; S.stars.has(t)?S.stars.delete(t):S.stars.add(t); saveStars(); render(); return;}
+    const rd=el.closest("[data-round]"); if(rd){e.preventDefault(); openRound(rd.dataset.round); return;}
+    const tab=el.closest(".tab"); if(tab){S.view=tab.dataset.view; S.team=null; S.round=null; S.limit=PAGE; try{localStorage.setItem("cs-view",S.view)}catch(_){}; render(); return;}
+    const f=el.closest("[data-f]"); if(f){const s=S[f.dataset.f],v=f.dataset.v; s.has(v)?s.delete(v):s.add(v); S.limit=PAGE; render(); return;}
+    if(el.id==="ftoggle"){const r=document.querySelector(".rail"); const on=r.classList.toggle("show-f"); el.setAttribute("aria-expanded",String(on)); return;}
+    if(el.id==="staronly"){S.starredOnly=!S.starredOnly; render(); return;}
+    const tm=el.closest("[data-team]"); if(tm){openTeam(tm.dataset.team); return;}
+    if(el.closest("[data-back]")){ if(S.round){S.round=null;} else {S.team=null; S.view="teams";} render(); return;}
+    const sr=el.closest("[data-search]"); if(sr){S.q=sr.dataset.search; $("#q").value=S.q; S.team=null; S.round=null; if(!["docs","evidence","rfd"].includes(S.view)) S.view="docs"; S.limit=PAGE; render(); window.scrollTo({top:0}); return;}
+    if(el.id==="more"){S.limit+=PAGE; render(); return;}
+    if(el.id==="clearall"||el.id==="clear2"){S.q="";$("#q").value="";S.tourney.clear();S.speech.clear();S.type.clear();S.starredOnly=false;render();return;}
+  });
+  document.addEventListener("keydown",e=>{
+    if(e.key==="Enter"&&e.target.classList&&e.target.classList.contains("tcard")) openTeam(e.target.dataset.team);
+    const typing=/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName);
+    if(e.key==="/"&&!typing){e.preventDefault(); $("#q").focus(); $("#q").select();}
+    if(e.key==="Escape"&&document.activeElement===$("#q")){$("#q").value=""; S.q=""; render(); $("#q").blur();}
+  });
+  let tmr; $("#q").addEventListener("input",e=>{clearTimeout(tmr); tmr=setTimeout(()=>{S.q=e.target.value.trim(); S.limit=PAGE; if(S.team) S.team=null; S.round=null; render();},140);});
+
+  render();
+
+  loadData();
+})();
+</script>
+</body>
+</html>
